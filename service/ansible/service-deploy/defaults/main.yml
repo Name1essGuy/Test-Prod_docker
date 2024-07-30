@@ -1,0 +1,4 @@
+---
+# defaults file for systemd
+app_repo_url: <url_репозитория_с_приложением>
+app_workdir: <Папка_приложения_на_сервере>

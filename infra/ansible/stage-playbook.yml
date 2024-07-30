@@ -1,0 +1,8 @@
+---
+- hosts: stage
+  become: true
+
+  tasks:
+    - name: Include stage setup role
+      include_role:
+        name: stage

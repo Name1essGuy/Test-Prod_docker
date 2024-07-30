@@ -1,0 +1,9 @@
+---
+- hosts: stage
+  become: true
+
+  tasks:
+    - name: Include service deployment role
+      include_role:
+        name: service-deploy
+ 

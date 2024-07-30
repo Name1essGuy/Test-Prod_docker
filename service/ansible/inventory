@@ -1,0 +1,2 @@
+[stage]
+stage_1 ansible_host=<ip_сервера> ansible_user=terraform ansible_ssh_private_key=<путь_к_закрытому_ключу>

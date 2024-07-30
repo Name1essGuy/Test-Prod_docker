@@ -1,0 +1,32 @@
+---
+- name: Create app directory
+  ansible.builtin.file:
+    path: ${app_workdir}
+    state: directory
+
+- name: Clone app repo
+  ansible.builtin.git:
+    repo: '${app_repo}'
+    dest: ${app_workdir}/
+
+- name: Create environment file
+  ansible.builtin.copy:
+    src: environment
+    dest: ${app_workdir}/environment
+    owner: root
+    group: docker
+    mode: u+rw-x, g+rw-x, o-rwx
+
+- name: Isert image tag into environment file
+  ansible.builin.shell: grep "image:" ${app_workdir}/docker-compose.yml | sed 's/.*image:\s/CONTAINER_TAG=/' >> ${app_workdir}/environment
+
+- name: Copy systemd unit file
+  ansible.builtin.copy:
+    src: docker-container.service
+    dest: /etc/systemd/system/
+
+- name: Launch app
+  ansible.builtin.systemd_service:
+    name: docker-container.service
+    state: started
+    enabled: true
