@@ -1,9 +1,0 @@
----
-# tasks file for stage
-- name: Include docker install
-  ansible.builtin.include_tasks: install-docker.yml
-
-
-- name: Include gitlab-runner setup
-  ansible.builtin.include_tasks: install-gitlab-runner.yml
-  when: gitlab_install == True

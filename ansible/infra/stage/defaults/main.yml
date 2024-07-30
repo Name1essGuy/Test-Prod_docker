@@ -1,5 +1,0 @@
----
-# defaults file for stage
-gitlab_install: False
-gitlab_url: <url_гитлаба>
-gitlab_token: <токен_раннера>
