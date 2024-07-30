@@ -1,0 +1,10 @@
+---
+- hosts: stage
+  become: true
+
+  tasks:
+    - name: Include systemd setup role
+      include_role:
+        name: systemd
+ 
+

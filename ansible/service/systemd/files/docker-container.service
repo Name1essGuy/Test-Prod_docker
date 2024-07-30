@@ -1,0 +1,12 @@
+[Unit]
+Description=Service for application
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/docker run -d ${CONTAINER_TAG}
+ExecStop=/usr/bin/docker stop ${CONTAINER_TAG}
+
+[Install]
+WantedBy=multi-user.target
