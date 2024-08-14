@@ -36,3 +36,6 @@
       - docker-scan-plugin
       - docker-compose-plugin
     update_cache: true
+
+- name: Login into dockerhub
+  shell: docker login -u {{ docker_user }} -p {{ docker_token }}

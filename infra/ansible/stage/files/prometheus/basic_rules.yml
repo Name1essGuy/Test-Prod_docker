@@ -1,0 +1,67 @@
+---
+groups:
+  - name: Basic monitoring rules
+    rules:
+
+      - alert: HostUnusualNetworkThroughputIn
+        expr: (sum by (instance) (rate(node_network_receive_bytes_total[2m])) / 1024 / 1024 > 50)
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Host unusual network throughput in (instance {{ $labels.instance }})
+          description: "Host network interfaces are probably receiving too much data (> 50 MB/s)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      - alert: HostHighCpuLoad
+        expr: (sum by (instance) (avg by (mode, instance) (rate(node_cpu_seconds_total{mode!="idle"}[2m]))) > 0.8)
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Host high CPU load (instance {{ $labels.instance }})
+          description: "CPU load is > 80%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      - alert: PrometheusTargetMissing
+        expr: up == 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: Prometheus target missing (instance {{ $labels.instance }})
+          description: "A Prometheus target has disappeared. An exporter might be crashed.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      - alert: PrometheusAllTargetsMissing
+        expr: sum by (job) (up) == 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: Prometheus all targets missing (instance {{ $labels.instance }})
+          description: "A Prometheus job does not have living target anymore.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      - alert: HostOutOfMemory
+        expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 10
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Host out of memory (instance {{ $labels.instance }})
+          description: "Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      - alert: HostOutOfDiskSpace
+        expr: (node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes < 10 and ON (instance, device, mountpoint) node_filesystem_readonly == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Host out of disk space (instance {{ $labels.instance }})
+          description: "Disk is almost full (< 10% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+      - alert: HostClockSkew
+        expr: (node_timex_offset_seconds > 0.05 and deriv(node_timex_offset_seconds[5m]) >= 0) or (node_timex_offset_seconds < -0.05 and deriv(node_timex_offset_seconds[5m]) <= 0)
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Host clock skew (instance {{ $labels.instance }})
+          description: "Clock skew detected. Clock is out of sync. Ensure NTP is configured correctly on this host.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"

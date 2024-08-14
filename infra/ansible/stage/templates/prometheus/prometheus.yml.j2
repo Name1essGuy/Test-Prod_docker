@@ -1,0 +1,46 @@
+# Sample config for Prometheus.
+
+global:
+  scrape_interval:     15s
+  external_labels:
+      monitor: 'stage'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets: ['localhost:9093']
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - "basic_rules.yml"
+  - "app_rules.yml"
+
+
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    scrape_timeout: 5s
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: stage_node
+    static_configs:
+      - targets: ['localhost:9100']
+
+  - job_name: stage_app
+    static_configs:
+      - targets: ['localhost:{{app_port}}']
+  
+  - job_name: prod_node
+    static_configs:
+      - targets: ['{{production_domain_name}}:9100']
+
+  - job_name: prod_app
+    static_configs:
+      - targets: ['{{production_domain_name}}:{{app_port}}']

@@ -1,0 +1,11 @@
+# /etc/nginx/sites-enabled/prometheus
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name monitoring.{{ domain_name }};
+
+    location / {
+        proxy_pass           http://localhost:9090/;
+    }
+}

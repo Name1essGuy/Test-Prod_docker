@@ -1,5 +1,17 @@
 ---
 # defaults file for stage
-gitlab_install: False
-gitlab_url: <url_гитлаба>
-gitlab_token: <токен_раннера>
+
+# Данные Гит
+gitlab_install: True
+gitlab_url: <Url_адрес_вашего_гитлаб>
+gitlab_token: <Ваш_гитлаб_токен>
+
+# Данные приложения
+app_port: 8080
+
+# Данные докер
+docker_user: <Логин_докерхаба>
+docker_token: <Токен_доступа_в_докерхаб>
+
+# Данные для мониторинга
+domain_name: <Зарегистрированное доменное имя>

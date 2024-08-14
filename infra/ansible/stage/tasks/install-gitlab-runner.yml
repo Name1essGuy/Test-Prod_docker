@@ -1,6 +1,3 @@
-#curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
-#sudo apt-get install gitlab-runner
-
 ---
 - name: Download script for apt repo add
   ansible.builtin.get_url:
@@ -18,4 +15,24 @@
     update_cache: true
 
 - name: Register a runner
-  ansible.builtin.shell: gitlab-runner register --non-interactive --executor "shell" --shell "bash" --url "{{ gitlab_url }}" --token "{{ gitlab_token }}"
+  shell: gitlab-runner register --non-interactive --executor "shell" --shell "bash" --url "{{ gitlab_url }}" --token "{{ gitlab_token }}"
+
+- name: Setup runner permissions
+  shell: usermod -aG docker gitlab-runner
+
+- name: Create sudo permissions file for runner
+  ansible.builtin.file:
+    path: /etc/sudoers.d/gitlab-runner
+    state: touch
+    owner: root
+    group: root
+    mode: u=r,g=r
+
+- name: Update sudo permissions for runner
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers.d/gitlab-runner
+    line: gitlab-runner ALL=(ALL) NOPASSWD:ALL
+    state: present
+
+- name: Verify a runner
+  shell: gitlab-runner verify

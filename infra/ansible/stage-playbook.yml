@@ -6,3 +6,9 @@
     - name: Include stage setup role
       include_role:
         name: stage
+  
+#  - name: Include service setup role
+#    ansible.builtin.include_role:
+#    - name: service
+ 
+

@@ -100,6 +100,27 @@ resource "yandex_vpc_security_group" "stage-sg" {
     port           = 22
   }
 
+  ingress {
+    protocol       = "TCP"
+    description    = "prometheus"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 9090
+  }
+
+  ingress {
+    protocol       = "TCP"
+    description    = "app"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 8080
+  }
+
+  ingress {
+    protocol       = "TCP"
+    description    = "grafana"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = 3000
+  }  
+
   egress {
     protocol       = "ANY"
     description    = "any"
@@ -152,20 +173,36 @@ resource "yandex_dns_zone" "stage-dns" {
   public      = true
 }
 
-resource "yandex_dns_recordset" "rs-1" {
+resource "yandex_dns_recordset" "stage-A" {
   zone_id = yandex_dns_zone.stage-dns.id
-  name    = "${var.domain}."
+  name    = "test.${var.domain}."
   ttl     = 600
   type    = "A"
   data    = [yandex_compute_instance.stage.network_interface.0.nat_ip_address]
 }
 
-resource "yandex_dns_recordset" "rs-2" {
+resource "yandex_dns_recordset" "app-A" {
   zone_id = yandex_dns_zone.stage-dns.id
-  name    = "www"
+  name    = "app.${var.domain}."
   ttl     = 600
-  type    = "CNAME"
-  data    = [ var.domain ]
+  type    = "A"
+  data    = [yandex_compute_instance.stage.network_interface.0.nat_ip_address]
+}
+
+resource "yandex_dns_recordset" "grafana-A" {
+  zone_id = yandex_dns_zone.stage-dns.id
+  name    = "grafana.${var.domain}."
+  ttl     = 600
+  type    = "A"
+  data    = [yandex_compute_instance.stage.network_interface.0.nat_ip_address]
+}
+
+resource "yandex_dns_recordset" "prometheus-A" {
+  zone_id = yandex_dns_zone.stage-dns.id
+  name    = "monitoring.${var.domain}."
+  ttl     = 600
+  type    = "A"
+  data    = [yandex_compute_instance.stage.network_interface.0.nat_ip_address]
 }
 
 output "stage_external_ip" {

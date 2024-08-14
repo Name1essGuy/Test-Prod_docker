@@ -1,0 +1,28 @@
+---
+# Nginx используется для маршрутизации трафика.
+- name: Install nginx
+  ansible.builtin.apt:
+    name:
+      - nginx
+    update_cache: true
+
+- name: Copy site config for prometheus
+  ansible.builtin.template:
+    src: nginx/prometheus.j2
+    dest: /etc/nginx/sites-enabled/prometheus
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: Copy site config for grafana
+  ansible.builtin.template:
+    src: nginx/prometheus.j2
+    dest: /etc/nginx/sites-enabled/grafana
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: Restart nginx
+  ansible.builtin.systemd_service:
+    name: nginx.service
+    state: restarted
