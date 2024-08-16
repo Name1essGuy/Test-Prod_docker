@@ -1,0 +1,52 @@
+# install docker exporter?
+# paste prometheus & alertmanager config
+
+---
+- name: Install grafana dependencies
+  ansible.builtin.apt:
+   name:
+    - apt-transport-https
+    - software-properties-common
+    - wget
+
+- name: Ensure keyrings directory is present
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+
+- name: Install monitoring apps
+  ansible.builtin.apt:
+    name:
+      - prometheus
+      - prometheus-alertmanager
+      - prometheus-node-exporter
+    update_cache: true
+
+- name: Copy promethus cfg file
+  ansible.builtin.template:
+    src: prometheus/prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: Copy app monitoring rules file
+  ansible.builtin.copy:
+    src: prometheus/app_rules.yml
+    dest: /etc/prometheus/app_rules.yml
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: Copy basic monitoring rules file
+  ansible.builtin.copy:
+    src: prometheus/basic_rules.yml
+    dest: /etc/prometheus/basic_rules.yml
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: Apply monitoring rules
+  ansible.builtin.systemd_service:
+    name: prometheus.service
+    state: restarted

@@ -1,0 +1,9 @@
+---
+- hosts: prod
+  become: true
+
+  tasks:
+    - name: Include stage setup role
+      include_role:
+        name: prod
+  
