@@ -1,0 +1,9 @@
+[Unit]
+Description=Loki Service
+
+[Service]
+Type=simple
+ExecStart=/var/Loki/loki-linux-amd64 -config.file=/var/Loki/loki-local-config.yaml
+
+[Install]
+WantedBy=multi-user.target

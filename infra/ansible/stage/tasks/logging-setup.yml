@@ -1,0 +1,78 @@
+---
+- name: Install unzipper
+  ansible.builtin.apt:
+    name:
+      - unzip
+    update_cache: true
+  
+- name: Create a directory for logging system
+  ansible.builtin.file:
+    path: /var/Loki
+    state: directory
+    owner: root
+    group: root
+    mode: u=rwx,g=rwx,o=x
+
+- name: Download loki
+  ansible.builtin.uri:
+    #url: https://github.com/grafana/loki/releases/download/v3.0.1/loki-linux-amd64.zip
+    url: https://github.com/grafana/loki/releases/download/v2.9.9/loki-linux-amd64.zip
+    dest: /tmp/
+    method: get
+
+- name: Download promtail
+  ansible.builtin.uri:
+    #url: https://github.com/grafana/loki/releases/download/v3.0.1/promtail-linux-amd64.zip
+    url: https://github.com/grafana/loki/releases/download/v2.9.9/promtail-linux-amd64.zip
+    dest: /tmp/
+    method: get
+
+- name: Unpack loki
+  shell: unzip -u /tmp/loki-linux-amd64.zip -d /var/Loki/
+
+- name: Unpack promtail
+  shell: unzip -u /tmp/promtail-linux-amd64.zip -d /var/Loki/
+
+- name: Copy config files for loki
+  ansible.builtin.template:
+    src: logging/loki-local-config.yaml.j2
+    dest: /var/Loki/loki-local-config.yaml
+    owner: root
+    group: root
+    mode: u=rwx,g=rwx,o=x
+
+- name: Copy config file for promtail
+  ansible.builtin.template:
+    src: logging/promtail-local-config.yaml
+    dest: /var/Loki/promtail-local-config.yaml
+    owner: root
+    group: root
+    mode: u=rwx,g=rwx,o=x
+
+- name: Copy systemd unit for loki
+  ansible.builtin.template:
+    src: logging/loki.service
+    dest: /etc/systemd/system/loki.service
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Copy systemd unit for promtail
+  ansible.builtin.template:
+    src: logging/loki.service
+    dest: /etc/systemd/system/promtail.service
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Start loki
+  ansible.builtin.service:
+    name: loki.service
+    state: started
+    enabled: true
+
+- name: Start promtail
+  ansible.builtin.service:
+    name: promtail.service
+    state: started
+    enabled: true

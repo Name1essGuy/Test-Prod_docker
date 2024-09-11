@@ -4,10 +4,10 @@ groups:
   rules:
 
   - alert: AppIsDown
-    expr: absent(up{job="stage_app"})
+    expr: absent(up{job="app"})
     for: 0m
     labels:
-      severity: criticcal
+      severity: critical
     annotations:
       summary: App is down on (instance {{ $labels.instance }})
       description: "App is down for somereasone\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"

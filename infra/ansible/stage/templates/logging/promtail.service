@@ -1,0 +1,9 @@
+[Unit]
+Description=Promtail Service
+
+[Service]
+Type=simple
+ExecStart=/var/Loki/promtail-linux-amd64 -config.file=/var/Loki/promtail-local-config.yaml
+
+[Install]
+WantedBy=multi-user.target

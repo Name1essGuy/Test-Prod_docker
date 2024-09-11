@@ -34,5 +34,14 @@
     line: gitlab-runner ALL=(ALL) NOPASSWD:ALL
     state: present
 
+- name: Create new environment file
+  ansible.builtin.copy:
+    src: environment
+    dest: /var/environment
+    owner: root
+    group: docker
+    mode: u=rw,g=rw
+    ignore_errors: true
+
 - name: Verify a runner
   shell: gitlab-runner verify

@@ -13,5 +13,8 @@
 - name: Include ansible install
   ansible.builtin.include_tasks: install-ansible.yml
 
-#- name: Include monitoring reverse proxy setup
-#  ansible.builtin.include_tasks: reverse-proxy-monitoring.yml
+- name: Include monitoring reverse proxy setup
+  ansible.builtin.include_tasks: reverse-proxy-monitoring.yml
+
+- name: Include logging setup
+  ansible.builtin.include_tasks: logging-setup.yml
